@@ -1,7 +1,7 @@
 from audio_transcriber import AudioTranscriber
 from audio_utils import display_valid_input_devices, get_valid_input_devices
 
-def hoge():
+def speech_to_text(tts_control):
     transcriber = AudioTranscriber()
 
     valid_devices = get_valid_input_devices()
@@ -12,4 +12,5 @@ def hoge():
     selected_device_index = int(input("Select DeviceIndex: "))
 
     # 文字起こしを開始
-    transcriber.start_transcription(selected_device_index)
+    transcriber.start_transcription(selected_device_index, tts_control)
+

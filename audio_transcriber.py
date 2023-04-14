@@ -9,6 +9,8 @@ from audio_utils import create_audio_stream
 from vad_utils import VadWrapper
 from whisper_utils import WhisperModelWrapper
 
+import text_to_speech
+
 
 class AudioTranscriber:
     def __init__(self):
@@ -18,7 +20,7 @@ class AudioTranscriber:
         self.speech_buffer = []
         self.audio_queue = queue.Queue()
 
-    async def transcribe_audio(self):
+    async def transcribe_audio(self, tts_control):
         with ThreadPoolExecutor() as executor:
             while True:
                 audio_data_np = await asyncio.get_event_loop().run_in_executor(
@@ -32,6 +34,8 @@ class AudioTranscriber:
                     print(
                         f"[{segment.start:.2f}s -> {segment.end:.2f}s] {segment.text}"
                     )
+                    text_to_speech.speech(tts_control, segment.text)
+                    
 
     def process_audio(self, in_data, frame_count, time_info, status):
         is_speech = self.vad_wrapper.is_speech(in_data)
@@ -55,10 +59,10 @@ class AudioTranscriber:
 
         return (in_data, pyaudio.paContinue)
 
-    def start_transcription(self, selected_device_index):
+    def start_transcription(self, selected_device_index, tts_control):
         stream = create_audio_stream(selected_device_index, self.process_audio)
         print("Listening...")
-        asyncio.run(self.transcribe_audio())
+        asyncio.run(self.transcribe_audio(tts_control=tts_control))
         stream.start_stream()
         try:
             while True:

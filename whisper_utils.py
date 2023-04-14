@@ -3,9 +3,9 @@ from faster_whisper import WhisperModel
 
 class WhisperModelWrapper:
     def __init__(self):
-        self.model_size = "small"
+        self.model_size = "large-v2"
         self.model = WhisperModel(
-            self.model_size, device="cpu", compute_type="int8"
+            self.model_size, device="cuda", compute_type="float16"
         )
 
     def transcribe(self, audio):
